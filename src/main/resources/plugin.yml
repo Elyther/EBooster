@@ -4,12 +4,16 @@ main: me.elythern.ebooster.EBooster
 api-version: 1.20
 
 commands:
+
   booster:
     description: Booster menüsü
-    usage: /booster
+
 
 depend:
+
   - Vault
 
+
 softdepend:
+
   - PlaceholderAPI
