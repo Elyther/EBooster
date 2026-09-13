@@ -11,11 +11,28 @@ public class VaultHook {
 static Economy eco;
 
 
-public static void give(
-Player p,double amount){
 
-eco.depositPlayer(
-p,amount);
+public static boolean take(Player p,double amount){
+
+
+if(eco.getBalance(p) >= amount){
+
+    eco.withdrawPlayer(p, amount);
+
+    return true;
+
+}
+
+
+return false;
+
+}
+
+
+
+public static void give(Player p,double amount){
+
+eco.depositPlayer(p,amount);
 
 }
 
