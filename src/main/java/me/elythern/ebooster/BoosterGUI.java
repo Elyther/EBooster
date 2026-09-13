@@ -9,152 +9,276 @@ import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
 
 
-public class BoosterGUI implements Listener{
+public class BoosterGUI implements Listener {
 
 
-private EBooster plugin;
+    private final EBooster plugin;
 
 
-public BoosterGUI(EBooster plugin){
-this.plugin=plugin;
-}
+    public BoosterGUI(EBooster plugin){
+        this.plugin = plugin;
+    }
 
 
 
-public void open(Player p){
+    public void open(Player p){
 
 
-Inventory inv =
-Bukkit.createInventory(
-null,27,
-"EBooster");
+        Inventory inv = Bukkit.createInventory(
+                null,
+                27,
+                "§6EBooster Menü"
+        );
 
 
-ItemStack info =
-new ItemStack(Material.GOLD_BLOCK);
 
+        // Booster Bakiyesi
 
-ItemMeta im=info.getItemMeta();
+        ItemStack info =
+                new ItemStack(Material.GOLD_BLOCK);
 
-im.setDisplayName(
-"§6Hazırkı Booster Balansı");
 
+        ItemMeta im =
+                info.getItemMeta();
 
-im.setLore(java.util.List.of(
-"§7Balans: §e"+
-DataManager.get(p.getUniqueId())
-+"$"
-));
 
+        im.setDisplayName(
+                "§eMevcut Booster Bakiyesi"
+        );
 
-info.setItemMeta(im);
 
+        im.setLore(java.util.List.of(
+                "§7Bakiyen: §a"
+                + format(DataManager.get(
+                p.getUniqueId()))
+                +"$"
+        ));
 
-inv.setItem(11,info);
 
 
+        info.setItemMeta(im);
 
-ItemStack cancel=
-new ItemStack(Material.RED_WOOL);
 
+        inv.setItem(11,info);
 
-ItemMeta cm=cancel.getItemMeta();
 
-cm.setDisplayName(
-"§cBooster Ləğv Et");
 
-cancel.setItemMeta(cm);
 
 
-inv.setItem(13,cancel);
+        // İptal
 
+        ItemStack cancel =
+                new ItemStack(Material.RED_WOOL);
 
 
-ItemStack take=
-new ItemStack(Material.EMERALD);
+        ItemMeta cm =
+                cancel.getItemMeta();
 
 
-ItemMeta tm=take.getItemMeta();
+        cm.setDisplayName(
+                "§cBooster İptal Et"
+        );
 
-tm.setDisplayName(
-"§aBalansı götür");
 
+        cm.setLore(java.util.List.of(
+                "§7Booster bakiyesinin",
+                "§7%50'si geri verilir."
+        ));
 
-take.setItemMeta(tm);
 
+        cancel.setItemMeta(cm);
 
-inv.setItem(15,take);
 
+        inv.setItem(13,cancel);
 
 
-p.openInventory(inv);
 
-}
 
 
 
-@EventHandler
-public void click(InventoryClickEvent e){
+        // Çek
 
-if(!e.getView()
-.getTitle()
-.equals("EBooster"))
-return;
+        ItemStack take =
+                new ItemStack(Material.EMERALD);
 
 
-e.setCancelled(true);
+        ItemMeta tm =
+                take.getItemMeta();
 
 
-Player p=(Player)e.getWhoClicked();
+        tm.setDisplayName(
+                "§aBakiyeyi Çek"
+        );
 
 
-if(e.getSlot()==15){
+        tm.setLore(java.util.List.of(
+                "§7Tüm booster paran",
+                "§7hesabına aktarılır."
+        ));
 
 
-double money=
-DataManager.get(
-p.getUniqueId());
+        take.setItemMeta(tm);
 
 
-p.closeInventory();
+        inv.setItem(15,take);
 
 
-DataManager.set(
-p.getUniqueId(),0);
 
 
-VaultHook.give(
-p,money);
+        p.openInventory(inv);
 
+    }
 
-}
 
 
-if(e.getSlot()==13){
 
 
-double money=
-DataManager.get(
-p.getUniqueId());
 
+    @EventHandler
+    public void click(InventoryClickEvent e){
 
-double refund=
-money/2;
 
+        if(!e.getView()
+                .getTitle()
+                .equals("§6EBooster Menü"))
+            return;
 
-DataManager.set(
-p.getUniqueId(),0);
 
 
-VaultHook.give(
-p,refund);
+        e.setCancelled(true);
 
 
-p.closeInventory();
 
+        if(!(e.getWhoClicked() instanceof Player))
+            return;
 
-}
 
-}
+
+        Player p =
+                (Player)e.getWhoClicked();
+
+
+
+
+        double money =
+                DataManager.get(
+                p.getUniqueId());
+
+
+
+        // Bakiyeyi çek
+
+        if(e.getSlot()==15){
+
+
+
+            if(money <= 0){
+
+                p.sendMessage(
+                "§cÇekilecek booster bakiyesi yok!");
+
+                return;
+            }
+
+
+
+            DataManager.set(
+            p.getUniqueId(),
+            0);
+
+
+
+            VaultHook.give(
+            p,
+            money);
+
+
+
+            p.closeInventory();
+
+
+            p.sendMessage(
+            "§a"
+            +format(money)
+            +"$ hesabına aktarıld!");
+
+        }
+
+
+
+
+
+        // İptal
+
+        if(e.getSlot()==13){
+
+
+
+            if(money <= 0){
+
+                p.sendMessage(
+                "§cİptal edilecek booster yok!");
+
+                return;
+            }
+
+
+
+            double refund =
+                    money / 2;
+
+
+
+            DataManager.set(
+            p.getUniqueId(),
+            0);
+
+
+
+            VaultHook.give(
+            p,
+            refund);
+
+
+
+            p.closeInventory();
+
+
+
+            p.sendMessage(
+            "§cBooster iptal edildi!");
+            
+
+            p.sendMessage(
+            "§aGeri verilen miktar: §e"
+            +format(refund)
+            +"$");
+
+        }
+
+    }
+
+
+
+
+
+    private String format(double amount){
+
+
+        if(amount >= 1000000000)
+            return (amount / 1000000000)+"B";
+
+
+        if(amount >= 1000000)
+            return (amount / 1000000)+"M";
+
+
+        if(amount >= 1000)
+            return (amount / 1000)+"K";
+
+
+        return String.valueOf(amount);
+
+    }
 
 }
