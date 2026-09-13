@@ -1,0 +1,12 @@
+# EBooster Configuration
+
+# Saniyədə verilən pul hesablaması
+# Məsələn:
+# 100000 balans × 0.0001 = 10$/s
+
+booster:
+  rate: 0.0001
+
+
+# Oyunçu məlumatları burada saxlanılır
+players: {}
