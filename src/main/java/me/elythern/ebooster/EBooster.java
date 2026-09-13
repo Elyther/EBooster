@@ -12,7 +12,7 @@ public class EBooster extends JavaPlugin {
     public void onEnable(){
 
 
-        instance=this;
+        instance = this;
 
 
         saveDefaultConfig();
@@ -46,10 +46,11 @@ public class EBooster extends JavaPlugin {
                 .getPlugin("PlaceholderAPI") != null){
 
 
-            new BoosterPlaceholder()
+            new BoosterPlaceholder(this)
                     .register();
 
         }
+
 
 
         getLogger()
