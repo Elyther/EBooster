@@ -1,0 +1,14 @@
+name: EBooster
+version: 1.0
+main: me.elythern.ebooster.EBooster
+api-version: 1.20
+
+commands:
+  booster:
+    description: Booster menu
+
+depend:
+  - Vault
+
+softdepend:
+  - PlaceholderAPI
