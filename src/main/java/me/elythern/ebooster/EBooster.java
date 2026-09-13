@@ -4,34 +4,66 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class EBooster extends JavaPlugin {
 
+
     private static EBooster instance;
 
+
     @Override
-    public void onEnable() {
-        instance = this;
+    public void onEnable(){
+
+
+        instance=this;
+
 
         saveDefaultConfig();
 
+
+
+        VaultHook.setup();
+
+
+
         getCommand("booster")
-                .setExecutor(new BoosterCommand(this));
+                .setExecutor(
+                new BoosterCommand(this));
+
+
 
         getServer()
                 .getPluginManager()
                 .registerEvents(
-                new BoosterGUI(this), this);
+                new BoosterGUI(this),
+                this);
 
-        if(getServer().getPluginManager()
+
+
+        new BoosterTask(this);
+
+
+
+        if(getServer()
+                .getPluginManager()
                 .getPlugin("PlaceholderAPI") != null){
 
-            new BoosterPlaceholder(this)
+
+            new BoosterPlaceholder()
                     .register();
+
         }
 
-        getLogger().info("EBooster aktiv!");
+
+        getLogger()
+                .info("EBooster aktif!");
+
     }
+
+
 
 
     public static EBooster get(){
+
         return instance;
+
     }
+
 }
