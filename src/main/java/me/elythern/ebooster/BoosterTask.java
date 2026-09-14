@@ -1,6 +1,7 @@
 package me.elythern.ebooster;
 
 import org.bukkit.scheduler.BukkitRunnable;
+
 import java.util.UUID;
 
 public class BoosterTask {
@@ -16,10 +17,17 @@ public class BoosterTask {
             public void run(){
 
 
+                if(plugin.getConfig()
+                        .getConfigurationSection("players") == null)
+                    return;
+
+
+
                 for(String key :
                         plugin.getConfig()
                         .getConfigurationSection("players")
                         .getKeys(false)){
+
 
 
                     UUID uuid =
@@ -27,32 +35,36 @@ public class BoosterTask {
 
 
 
-                    double balance =
-                    DataManager.get(uuid);
+                    double amount =
+                    DataManager.getAmount(uuid);
 
 
 
-                    if(balance <= 0)
+                    if(amount <= 0)
                         continue;
 
 
 
-                    double rate =
-                    balance *
-                    plugin.getConfig()
-                    .getDouble(
-                    "booster.rate");
+                    // İlkin məbləğin 3%-i
+                    double reward =
+                    amount * 0.03;
+
+
+
+                    double oldBalance =
+                    DataManager.getBalance(uuid);
 
 
 
                     double newBalance =
-                    balance + rate;
+                    oldBalance + reward;
 
 
 
-                    DataManager.set(
+                    DataManager.setBalance(
                     uuid,
                     newBalance);
+
 
                 }
 
@@ -67,5 +79,6 @@ public class BoosterTask {
         );
 
     }
+
 
 }
