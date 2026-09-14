@@ -23,11 +23,25 @@ public class EBooster extends JavaPlugin {
 
 
 
+
+        // Komut qeydiyyatı
+
         getCommand("booster")
                 .setExecutor(
                 new BoosterCommand(this));
 
 
+
+        // TAB COMPLETE
+
+        getCommand("booster")
+                .setTabCompleter(
+                new BoosterTab());
+
+
+
+
+        // GUI Event
 
         getServer()
                 .getPluginManager()
@@ -37,9 +51,16 @@ public class EBooster extends JavaPlugin {
 
 
 
+
+        // Saniyəlik booster sistemi
+
         new BoosterTask(this);
 
 
+
+
+
+        // PlaceholderAPI
 
         if(getServer()
                 .getPluginManager()
@@ -53,10 +74,13 @@ public class EBooster extends JavaPlugin {
 
 
 
+
+
         getLogger()
                 .info("EBooster aktif!");
 
     }
+
 
 
 
@@ -66,5 +90,6 @@ public class EBooster extends JavaPlugin {
         return instance;
 
     }
+
 
 }
