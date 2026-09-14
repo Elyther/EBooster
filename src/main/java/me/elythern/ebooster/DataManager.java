@@ -5,13 +5,13 @@ import java.util.UUID;
 public class DataManager {
 
 
-    // Booster balansı (toplanan pul)
+    // Kazanılan booster bakiyesi
     public static double getBalance(UUID uuid){
 
         return EBooster.get()
                 .getConfig()
                 .getDouble(
-                "players."+uuid+".balance",
+                "players." + uuid + ".balance",
                 0);
 
     }
@@ -24,7 +24,7 @@ public class DataManager {
         EBooster.get()
                 .getConfig()
                 .set(
-                "players."+uuid+".balance",
+                "players." + uuid + ".balance",
                 amount);
 
 
@@ -35,17 +35,20 @@ public class DataManager {
 
 
 
-    // İlkin qoyulan booster məbləği
+
+    // İlk yatırılan booster miktarı
+
     public static double getAmount(UUID uuid){
 
 
         return EBooster.get()
                 .getConfig()
                 .getDouble(
-                "players."+uuid+".amount",
+                "players." + uuid + ".amount",
                 0);
 
     }
+
 
 
 
@@ -56,7 +59,7 @@ public class DataManager {
         EBooster.get()
                 .getConfig()
                 .set(
-                "players."+uuid+".amount",
+                "players." + uuid + ".amount",
                 amount);
 
 
@@ -66,7 +69,10 @@ public class DataManager {
 
 
 
-    // Hər saniyə verilən gəlir
+
+
+    // Saniyelik kazanç (%3)
+
     public static double getPerSecond(UUID uuid){
 
 
@@ -75,6 +81,10 @@ public class DataManager {
     }
 
 
+
+
+
+    // Kısa sayı formatı
 
     public static String format(double amount){
 
@@ -87,12 +97,14 @@ public class DataManager {
         }
 
 
+
         if(amount >= 1000000){
 
             return String.format("%.1fM",
                     amount / 1000000);
 
         }
+
 
 
         if(amount >= 1000){
@@ -103,7 +115,30 @@ public class DataManager {
         }
 
 
+
         return String.format("%.0f", amount);
+
+    }
+
+
+
+
+
+
+    // Eski kodlarla uyumluluk için
+
+    public static double get(UUID uuid){
+
+        return getBalance(uuid);
+
+    }
+
+
+
+
+    public static void set(UUID uuid, double amount){
+
+        setBalance(uuid, amount);
 
     }
 
