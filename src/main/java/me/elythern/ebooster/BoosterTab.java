@@ -5,10 +5,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
 public class BoosterTab implements TabCompleter {
+
 
 
     @Override
@@ -16,38 +18,89 @@ public class BoosterTab implements TabCompleter {
             CommandSender sender,
             Command command,
             String label,
-            String[] args) {
+            String[] args){
 
 
-        List<String> list = new ArrayList<>();
+
+        List<String> liste = new ArrayList<>();
 
 
-        // /booster e...
+
+        // /booster a
         if(args.length == 1){
 
 
-            list.add("ekle");
+            liste.add("add");
+            liste.add("ekle");
 
+
+            return filtrele(args[0], liste);
+
+        }
+
+
+
+
+
+        // /booster add miktar
+
+        if(args.length == 2 &&
+                (args[0].equalsIgnoreCase("add")
+                || args[0].equalsIgnoreCase("ekle"))){
+
+
+
+            liste.add("1000");
+            liste.add("10k");
+            liste.add("100k");
+            liste.add("1m");
+
+
+
+            return filtrele(args[1], liste);
 
         }
 
 
 
-        // /booster ekle ...
-        if(args.length == 2
-                && args[0].equalsIgnoreCase("ekle")){
+        return new ArrayList<>();
 
-
-            list.add("10k");
-            list.add("50k");
-            list.add("100k");
-            list.add("1m");
-
-
-        }
-
-
-        return list;
     }
+
+
+
+
+
+    private List<String> filtrele(
+            String girilen,
+            List<String> liste){
+
+
+
+        List<String> sonuc =
+                new ArrayList<>();
+
+
+
+        for(String kelime : liste){
+
+
+            if(kelime.toLowerCase()
+                    .startsWith(
+                    girilen.toLowerCase())){
+
+
+                sonuc.add(kelime);
+
+            }
+
+        }
+
+
+
+        return sonuc;
+
+    }
+
 
 }
