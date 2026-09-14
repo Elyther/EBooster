@@ -13,7 +13,9 @@ public class BoosterCommand implements CommandExecutor {
 
 
     public BoosterCommand(EBooster plugin){
+
         this.plugin = plugin;
+
     }
 
 
@@ -26,83 +28,92 @@ public class BoosterCommand implements CommandExecutor {
 
 
         if(!(sender instanceof Player)){
-            sender.sendMessage("Bu komutu sadece oyuncular kullanabilir.");
+
+            sender.sendMessage(
+                    "Bu komutu sadece oyuncular kullanabilir."
+            );
+
             return true;
         }
 
 
-        Player p = (Player)sender;
+
+        Player oyuncu = (Player)sender;
 
 
 
         // /booster
         if(args.length == 0){
 
-            new BoosterGUI(plugin).open(p);
+            new BoosterGUI(plugin).open(oyuncu);
 
             return true;
+
         }
 
 
 
-        // /booster ekle <miktar>
-        if(args[0].equalsIgnoreCase("ekle")
-        || args[0].equalsIgnoreCase("add")){
+
+
+        // /booster add miktar
+
+        if(args[0].equalsIgnoreCase("add")
+        || args[0].equalsIgnoreCase("ekle")){
 
 
             if(args.length < 2){
 
-                p.sendMessage(
-                "§cKullanım: §e/booster ekle <miktar>");
+                oyuncu.sendMessage(
+                "§cKullanım: §e/booster add <miktar>");
 
                 return true;
+
             }
 
 
 
-            double amount;
+
+            double miktar;
 
 
             try{
 
+                miktar = parseAmount(args[1]);
 
-                amount = parseAmount(args[1]);
+            }
+            catch(Exception e){
 
-
-            }catch(Exception e){
-
-
-                p.sendMessage(
+                oyuncu.sendMessage(
                 "§cGeçersiz miktar! Örnek: §e10k, 1m, 5000");
 
-
                 return true;
+
             }
 
 
 
-            if(amount <= 0){
 
+            if(miktar <= 0){
 
-                p.sendMessage(
+                oyuncu.sendMessage(
                 "§cMiktar 0'dan büyük olmalı!");
 
-
                 return true;
+
             }
 
 
 
 
-            // Oyuncunun parasını kontrol et
 
-            if(!VaultHook.take(p, amount)){
+            // Para kontrolü
+
+            if(!VaultHook.take(oyuncu,miktar)){
 
 
-                p.sendMessage(
+                oyuncu.sendMessage(
                 "§cYeterli paran yok!");
 
-
                 return true;
 
             }
@@ -110,36 +121,60 @@ public class BoosterCommand implements CommandExecutor {
 
 
 
-            double old =
-            DataManager.get(
-            p.getUniqueId());
+
+            // Eski booster miktarı
+
+            double eskiMiktar =
+                    DataManager.getAmount(
+                    oyuncu.getUniqueId());
 
 
 
-            DataManager.set(
-            p.getUniqueId(),
-            old + amount);
+
+            // Yeni miktar ekle
+
+            DataManager.setAmount(
+                    oyuncu.getUniqueId(),
+                    eskiMiktar + miktar);
 
 
 
-            p.sendMessage(
-            "§aBooster bakiyene §e"
-            +format(amount)
-            +"$ §akoyuldu!");
+
+
+            double saniyelikKazanc =
+                    (eskiMiktar + miktar) * 0.03;
+
+
+
+
+            oyuncu.sendMessage(
+            "§aBooster'a §e"
+            + DataManager.format(miktar)
+            +"$ §ayüklendi!");
+
+
+
+            oyuncu.sendMessage(
+            "§7Kazanç: §e"
+            + DataManager.format(saniyelikKazanc)
+            +"$/s");
 
 
 
             return true;
+
 
         }
 
 
 
 
-        p.sendMessage(
+
+        oyuncu.sendMessage(
         "§cKullanım:\n"
         +"§e/booster\n"
-        +"§e/booster ekle <miktar>");
+        +"§e/booster add <miktar>");
+
 
 
         return true;
@@ -150,7 +185,9 @@ public class BoosterCommand implements CommandExecutor {
 
 
 
-    // 10k, 1m, 1b sistemi
+
+
+    // 10k - 1m - 1b sistemi
 
     private double parseAmount(String text){
 
@@ -161,68 +198,53 @@ public class BoosterCommand implements CommandExecutor {
 
 
 
-        double multiplier = 1;
+        double carpan = 1;
+
 
 
 
         if(text.endsWith("k")){
 
 
-            multiplier = 1000;
-            text = text.substring(0,text.length()-1);
+            carpan = 1000;
+
+            text = text.substring(
+                    0,
+                    text.length()-1);
+
+        }
 
 
-        }else if(text.endsWith("m")){
+        else if(text.endsWith("m")){
 
 
-            multiplier = 1000000;
-            text = text.substring(0,text.length()-1);
+            carpan = 1000000;
+
+            text = text.substring(
+                    0,
+                    text.length()-1);
+
+        }
 
 
-        }else if(text.endsWith("b")){
+        else if(text.endsWith("b")){
 
 
-            multiplier = 1000000000;
-            text = text.substring(0,text.length()-1);
+            carpan = 1000000000;
+
+            text = text.substring(
+                    0,
+                    text.length()-1);
 
         }
 
 
 
-        return Double.parseDouble(text) * multiplier;
+
+        return Double.parseDouble(text) * carpan;
+
 
     }
 
-
-
-
-
-    private String format(double amount){
-
-
-        if(amount >= 1000000000){
-
-            return (amount / 1000000000)+"B";
-
-        }
-
-
-        if(amount >= 1000000){
-
-            return (amount / 1000000)+"M";
-
-        }
-
-
-        if(amount >= 1000){
-
-            return (amount / 1000)+"K";
-
-        }
-
-
-        return String.valueOf(amount);
-
-    }
 
 }
